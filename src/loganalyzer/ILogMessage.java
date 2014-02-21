@@ -11,6 +11,9 @@ package loganalyzer;
  * @author kj000027
  */
 public interface ILogMessage {
+   
+    ILogMessage setMessage(String message);
+    ILogMessage setLine(Integer line);
     
     String getMessage();
     Integer getLine(); 
