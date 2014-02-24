@@ -23,7 +23,7 @@ public class LogAnalyzer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ILogReader<ILogMessage> reader = null;
+        ILogReader<LogMessage> reader = new FileLogReader<>();
         ILogParser<ILogMessage, IParsedMessage> parser = null;
         IModel<IParsedMessage> model = null;
 
