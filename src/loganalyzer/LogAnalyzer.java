@@ -1,5 +1,8 @@
 package loganalyzer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 
 /**
  *
@@ -8,9 +11,9 @@ package loganalyzer;
 public class LogAnalyzer {
     
     public static void doMain(
-            ILogReader<ILogMessage> reader,
-            ILogParser<ILogMessage, IParsedMessage> parser,
-            IModel<IParsedMessage> model) {
+            ILogReader reader,
+            ILogParser parser,
+            IModel model) {
 
         parser.registerCallback(model);
         while (reader.hasNext())
@@ -21,11 +24,17 @@ public class LogAnalyzer {
 
     /**
      * @param args the command line arguments
+     * @throws java.io.FileNotFoundException
      */
-    public static void main(String[] args) {
-        ILogReader<LogMessage> reader = new FileLogReader<>();
-        ILogParser<ILogMessage, IParsedMessage> parser = null;
-        IModel<IParsedMessage> model = null;
+    public static void main(String[] args) throws FileNotFoundException {
+        if (args.length != 1) {
+            usage();
+            System.exit(0);
+        }     
+        
+        ILogReader reader = new FileLogReader(args[0]);
+        ILogParser parser = new OpenStageLogParser();
+        IModel model = new OpenStageModel();
 
         // TODO:
         //   - Parse options
@@ -38,5 +47,9 @@ public class LogAnalyzer {
         */
         
         doMain(reader, parser, model);
+    }
+
+    private static void usage() {
+        System.out.println(System.getProperty("sun.java.command") + " inputFile");
     }
 }

@@ -9,10 +9,8 @@ package loganalyzer;
 /**
  *
  * @author cz2b10w5
- * @param <I>
- * @param <E>
  */
-public interface ILogParser<I extends ILogMessage, E extends IParsedMessage> {
-    void registerCallback(ICallbackInterface<E> callback);
-    void parseMessage(I message);
+public interface ILogParser {
+    void registerCallback(ICallbackInterface<IParsedMessage> callback);
+    void parseMessage(ILogMessage message);
 }
