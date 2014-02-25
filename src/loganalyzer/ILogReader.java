@@ -11,8 +11,7 @@ import java.util.Iterator;
 /**
  *
  * @author cz2b10w5
- * @param <T>
  */
-public interface ILogReader<T extends ILogMessage> extends Iterator<T> {
+public interface ILogReader extends Iterator<ILogMessage> {
     
 }

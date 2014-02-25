@@ -9,8 +9,12 @@ package loganalyzer;
 /**
  *
  * @author kj000027
- * @param <E>
  */
-public interface ICallbackInterface<E> {
-    void runCallback(E event);
+public class OpenStageModel implements IModel{
+
+    @Override
+    public void runCallback(IParsedMessage event) {
+        System.out.println(event.getKeyValues().values().toArray()[0]);
+    }
+    
 }

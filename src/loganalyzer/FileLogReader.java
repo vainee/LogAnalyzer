@@ -10,17 +10,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.security.jgss.GSSToken;
 
 /**
  *
  * @author cz2b10w5
- * @param <T>
  */
-public class FileLogReader<T extends ILogMessage> implements ILogReader<T> {
+public class FileLogReader implements ILogReader {
 
     
     private final String fileName;
@@ -29,18 +26,12 @@ public class FileLogReader<T extends ILogMessage> implements ILogReader<T> {
     
     private String data;
     private Integer lineNumber;
-    
-    
 
     
     public FileLogReader(String fileName) throws FileNotFoundException {
         hasNextReady = false;
         this.fileName = fileName;
-        /*
-        Class clazz = Class<T>;
-        new clazz();
-        */
-               
+        lineNumber = new Integer(0);
 
         inputReader = new BufferedReader(new FileReader(fileName));
     }
@@ -56,16 +47,15 @@ public class FileLogReader<T extends ILogMessage> implements ILogReader<T> {
     }
 
     @Override
-    public T next() {
+    public ILogMessage next() {        
         if (!hasNextReady)
         {
             readLine();
         }
-        /*
-        T a = new class<T>;
-        a.setLine(lineNumber).setMessage(data);
-        return new a;
-        */
+        
+        hasNextReady = false;
+        
+        return new LogMessage(data, lineNumber);
     }
 
     @Override
@@ -76,10 +66,10 @@ public class FileLogReader<T extends ILogMessage> implements ILogReader<T> {
     
     private void readLine()
     {
-        assert hasNextReady==false: "Unread data in input reader while reading new line."
+        assert hasNextReady == false: "Unread data in input reader while reading new line.";
         
         try {
-            if ( (data=inputReader.readLine()) != null) {
+            if ((data = inputReader.readLine()) != null) {
                 hasNextReady = true;
                 lineNumber++;
             }

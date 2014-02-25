@@ -9,9 +9,7 @@ package loganalyzer;
 /**
  *
  * @author kj000027
- * @param <E>
  */
-public interface IModel<E extends IParsedMessage>
-    extends ICallbackInterface<E> {
+public interface IModel extends ICallbackInterface<IParsedMessage> {
     // Empty.
 }
