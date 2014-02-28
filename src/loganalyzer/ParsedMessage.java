@@ -33,4 +33,5 @@ public class ParsedMessage implements IParsedMessage{
         parsedMessages.put(key, value);
     }
     
+    protected void doSomething(){}
 }
