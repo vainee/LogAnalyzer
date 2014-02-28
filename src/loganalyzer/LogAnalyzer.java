@@ -20,6 +20,7 @@ public class LogAnalyzer {
         {
             parser.parseMessage(reader.next());
         }
+        parser.finishParsing();
     }
 
     /**
@@ -50,6 +51,6 @@ public class LogAnalyzer {
     }
 
     private static void usage() {
-        System.out.println(System.getProperty("sun.java.command") + " inputFile");
+//        System.out.println(System.getProperty("sun.java.command") + " inputFile");
     }
 }

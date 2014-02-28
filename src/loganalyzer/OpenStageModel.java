@@ -14,7 +14,10 @@ public class OpenStageModel implements IModel{
 
     @Override
     public void runCallback(IParsedMessage event) {
-        System.out.println(event.getKeyValues().values().toArray()[0]);
+        if (!event.getKeyValues().isEmpty()) {
+            //System.out.println(event.getKeyValues().values().toArray()[0]);
+            System.out.println(event.getKeyValues().toString() + "\n----------------");
+        }
     }
     
 }
