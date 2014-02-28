@@ -8,10 +8,10 @@ package loganalyzer;
 
 /**
  *
- * @author cz2b10w5
+ * @author Pavel Vejnarek <vejnarek at gmail.com>
  */
-public interface ILogParser {
-    void registerCallback(ICallbackInterface<IParsedMessage> callback);
-    void parseMessage(ILogMessage message);
-    void finishParsing();
+public enum ParsedMessageType {
+    LOG,
+    HEADER,
+    ERROR;    
 }
