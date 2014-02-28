@@ -6,10 +6,15 @@
 
 package loganalyzer;
 
+import java.util.Iterator;
+
 /**
  *
  * @author kj000027
  */
-public interface IModel extends ICallbackInterface<IParsedMessage> {
-    // Empty.
+public interface IModel extends ICallbackInterface<IParsedMessage>, Iterator<ModelItem> {
+    int getItemsCount();
+    ModelItem getItemAtIndex(int index);
+    
+    
 }
