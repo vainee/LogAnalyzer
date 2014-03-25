@@ -11,6 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import loganalyzer.datatypes.DataDateTime;
+import loganalyzer.datatypes.DataTypeHelper;
+import loganalyzer.datatypes.IData;
 
 /**
  *
@@ -21,6 +24,15 @@ public class OpenStageLogParser implements ILogParser {
     private List<ICallbackInterface<IParsedMessage>> callbacks = new ArrayList<>();
     private List<ILogMessage> messageBuffer;
     private Integer errorsCount = 0;
+    private DataTypeHelper dataHelper;
+
+    public DataTypeHelper getDataHelper() {
+        return dataHelper;
+    }
+
+    public void setDataHelper(DataTypeHelper helper) {
+        this.dataHelper = helper;
+    }
 
     
     // ************* regular expression strings *************
@@ -34,10 +46,11 @@ public class OpenStageLogParser implements ILogParser {
     private final String FIRST_LINE_REGEX = 
         "(?<TraceLevel>___TRACE:___|---INFO:---|___LOG:___|~~~DEBUG:~~~|\\+\\+\\+WARNING:\\+\\+\\+|\\*\\*\\*ERROR:\\*\\*\\*)" +
         "\\s*" +
+        "(?<DateTime>" +
         "(?<DayOfWeek>Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s*" +
         "(?<Month>Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s*" +
         "(?<Day>\\d*)\\s*" +
-        "(?<Hour>\\d*):(?<Min>\\d*):(?<Sec>\\d*)\\s*(?<Year>\\d*).(?<MSec>\\d*)\\s*";
+        "(?<Hour>\\d*):(?<Min>\\d*):(?<Sec>\\d*)\\s*(?<Year>\\d*).(?<MSec>\\d*))\\s*";
     
     // EXAMPLE:
     // DisplayAPI::QtMessageHandler(2283): ./src/QtMessageHandler.cpp:19 QDebug: Keypad Key Pressed (Handled by IdleScreen):  49 
@@ -105,8 +118,10 @@ public class OpenStageLogParser implements ILogParser {
     private boolean checkHeader(ILogMessage msg, ParsedMessage output) {
         Matcher m = fileHeaderRegex.matcher(msg.getMessage());
         if (m.matches()) {
-            output.addKeyValue("Type", ParsedMessageType.HEADER.toString());
-            output.addKeyValue("Header", m.group("Header"));
+            //output.addKeyValue("Type", ParsedMessageType.HEADER.toString());
+            output.addKeyValue("Type", dataHelper.getFactory("Type").getNewInstance(ParsedMessageType.HEADER.toString()));
+            //output.addKeyValue("Header", m.group("Header"));
+            output.addKeyValue("Header", dataHelper.getFactory("Header").getNewInstance(m.group("Header")));
             return true;
         }
         
@@ -137,7 +152,8 @@ public class OpenStageLogParser implements ILogParser {
                     // ___TRACE:___   Thu Aug  4 16:35:54 2011.662
                     Matcher m1 = firstLineRegex.matcher(msg.getMessage());
                     if (m1.matches()) {
-                        output.addKeyValue("Type", ParsedMessageType.LOG.toString());
+                        //output.addKeyValue("Type", ParsedMessageType.LOG.toString());
+                        output.addKeyValue("Type", dataHelper.getFactory("Type").getNewInstance(ParsedMessageType.LOG.toString()));
                         
                         String traceLevel;
                         switch (m1.group("TraceLevel")) {
@@ -164,7 +180,13 @@ public class OpenStageLogParser implements ILogParser {
                                 traceLevel = "INVALID";
                                 break;
                         }
-                        output.addKeyValue("TraceLevel", traceLevel);
+                        //output.addKeyValue("TraceLevel", traceLevel);
+                        output.addKeyValue("TraceLevel", dataHelper.getFactory("TraceLevel").getNewInstance(traceLevel));
+                        
+                        // Date/Time part
+                        //DataDateTime date = new DataDateTime(m1.group("DateTime"));
+                        output.addKeyValue("DateTime", dataHelper.getFactory("DateTime").getNewInstance(m1.group("DateTime")));
+                        /*
                         output.addKeyValue("DayOfWeek", m1.group("DayOfWeek"));
                         output.addKeyValue("Month", m1.group("Month"));
                         output.addKeyValue("Day", m1.group("Day"));
@@ -173,6 +195,9 @@ public class OpenStageLogParser implements ILogParser {
                         output.addKeyValue("Sec", m1.group("Sec"));
                         output.addKeyValue("Year", m1.group("Year"));
                         output.addKeyValue("MSec", m1.group("MSec"));
+                        */
+                        
+                        
                     } else {
                         // report a problem
                         this.errorsCount++;
@@ -188,10 +213,14 @@ public class OpenStageLogParser implements ILogParser {
 
                     Matcher m2 = secondLineRegex.matcher(msg.getMessage());
                     if (m2.matches()) {
-                        output.addKeyValue("Component", m2.group("Component"));
-                        output.addKeyValue("Pid", m2.group("Pid"));
-                        output.addKeyValue("SrcFile", m2.group("SrcFile"));
-                        output.addKeyValue("SrcLine", m2.group("SrcLine"));
+                        //output.addKeyValue("Component", m2.group("Component"));
+                        output.addKeyValue("Component", dataHelper.getFactory("Component").getNewInstance(m2.group("Component")));
+                        //output.addKeyValue("Pid", m2.group("Pid"));
+                        output.addKeyValue("Pid", dataHelper.getFactory("Pid").getNewInstance(m2.group("Pid")));
+                        //output.addKeyValue("SrcFile", m2.group("SrcFile"));
+                        output.addKeyValue("SrcFile", dataHelper.getFactory("SrcFile").getNewInstance(m2.group("SrcFile")));
+                        //output.addKeyValue("SrcLine", m2.group("SrcLine"));
+                        output.addKeyValue("SrcLine", dataHelper.getFactory("SrcLine").getNewInstance(m2.group("SrcLine")));
                         textMessage.append(m2.group("Line2Message"));
                     } else {
                         // report a problem
@@ -209,7 +238,8 @@ public class OpenStageLogParser implements ILogParser {
         } //for
         
         if (textMessage.length() > 0) {
-            output.addKeyValue("TraceMessage", textMessage.toString());
+            //output.addKeyValue("TraceMessage", textMessage.toString());
+            output.addKeyValue("TraceMessage", dataHelper.getFactory("TraceMessage").getNewInstance(textMessage.toString()));
         }
 
         return output;

@@ -9,6 +9,7 @@ package loganalyzer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import loganalyzer.datatypes.IData;
 import loganalyzer.utils.Pair;
 
 /**
@@ -17,7 +18,7 @@ import loganalyzer.utils.Pair;
  */
 public class ParsedMessage implements IParsedMessage{
 
-    Map<String, String> parsedMessages = new HashMap<>();
+    Map<String, IData> parsedMessages = new HashMap<>();
     
     @Override
     public List<Pair<Integer, String>> getOriginalMessage() {
@@ -25,11 +26,11 @@ public class ParsedMessage implements IParsedMessage{
     }
 
     @Override
-    public Map<String, String> getKeyValues() {
+    public Map<String, IData> getKeyValues() {
         return parsedMessages;
     }
     
-    public void addKeyValue(String key, String value) {
+    public void addKeyValue(String key, IData value) {
         parsedMessages.put(key, value);
     }
     
