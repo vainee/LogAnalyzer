@@ -1,7 +1,12 @@
 package loganalyzer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import loganalyzer.filter.exceptions.AnalyzerException;
+import loganalyzer.filter.exceptions.LexicalException;
+import loganalyzer.filter.interfaces.IConditionAnalyzer;
+import loganalyzer.filter.openstagefilter.OpenStageConditionAnalyzer;
 
 
 /**
@@ -47,7 +52,14 @@ public class LogAnalyzer {
         model = new Model();
         */
         
-        doMain(reader, parser, model);
+        //doMain(reader, parser, model);
+        IConditionAnalyzer analyzer = new OpenStageConditionAnalyzer();
+        try {
+            //analyzer.getCompiledCondition("(A == B) || A && (C == 5)").eval();
+            analyzer.getCompiledCondition("!!1!").eval();
+        } catch (LexicalException | AnalyzerException ex) {
+            Logger.getLogger(LogAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private static void usage() {
