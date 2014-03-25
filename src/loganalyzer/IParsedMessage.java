@@ -8,6 +8,7 @@ package loganalyzer;
 
 import java.util.List;
 import java.util.Map;
+import loganalyzer.datatypes.IData;
 import loganalyzer.utils.Pair;
 
 /**
@@ -17,5 +18,5 @@ import loganalyzer.utils.Pair;
 public interface IParsedMessage {
     List<Pair<Integer, String>> getOriginalMessage();
     
-    Map<String, String> getKeyValues();
+    Map<String, IData> getKeyValues();
 }

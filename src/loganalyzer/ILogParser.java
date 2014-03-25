@@ -6,12 +6,15 @@
 
 package loganalyzer;
 
+import loganalyzer.datatypes.DataTypeHelper;
+
 /**
  *
  * @author cz2b10w5
  */
 public interface ILogParser {
     void registerCallback(ICallbackInterface<IParsedMessage> callback);
+    void setDataHelper(DataTypeHelper typeHelper);
     void parseMessage(ILogMessage message);
     void finishParsing();
 }
