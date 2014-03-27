@@ -6,6 +6,7 @@
 
 package loganalyzer;
 
+import loganalyzer.parsers.IParsedMessage;
 import java.util.ArrayList;
 import java.util.List;
 

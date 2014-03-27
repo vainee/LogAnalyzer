@@ -46,4 +46,9 @@ public class DataInteger implements IDataNumber<Integer> {
     public void setValue(Integer value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }

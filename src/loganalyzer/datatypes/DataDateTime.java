@@ -70,4 +70,9 @@ public class DataDateTime implements IDataDateTime<Date> {
     public void setValue(Date value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }

@@ -1,5 +1,7 @@
 package loganalyzer;
 
+import loganalyzer.parsers.ILogParser;
+import loganalyzer.parsers.OpenStageLogParser;
 import java.io.FileNotFoundException;
 import loganalyzer.datatypes.DataTypeHelper;
 import loganalyzer.datatypes.DateTimeFactory;
