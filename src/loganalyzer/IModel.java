@@ -12,9 +12,9 @@ import java.util.Iterator;
  *
  * @author kj000027
  */
-public interface IModel extends ICallbackInterface<IParsedMessage>, Iterator<ModelItem> {
+public interface IModel extends ICallbackInterface<IParsedMessage>, Iterator<IParsedMessage> {
     int getItemsCount();
-    ModelItem getItemAtIndex(int index);
+    IParsedMessage getItemAtIndex(int index);
     
     
 }

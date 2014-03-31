@@ -33,6 +33,9 @@ public class ParsedMessage implements IParsedMessage{
     public void addKeyValue(String key, IData value) {
         parsedMessages.put(key, value);
     }
-    
-    protected void doSomething(){}
+
+    @Override
+    public IData getDataForKey(String key) {
+        return parsedMessages.get(key);
+    }
 }

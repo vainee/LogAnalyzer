@@ -8,8 +8,8 @@ package loganalyzer.filter.openstagefilter;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import loganalyzer.datatypes.DataTypeHelper;
+import loganalyzer.datatypes.IData;
 import loganalyzer.filter.exceptions.AnalyzerException;
 import loganalyzer.filter.exceptions.LexicalException;
 import loganalyzer.filter.interfaces.ICompiledCondition;
@@ -19,63 +19,96 @@ import loganalyzer.filter.openstagefilter.OpenStageConditionParser.States;
 import loganalyzer.utils.Pair;
 
 
-public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCallback<Pair<States, String>> {
+public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCallback<Pair<States, IData>> {
     private CompiledCondition cc;
     
     private List<StackItem> stack = new LinkedList<>();
     
     public OpenStageConditionAnalyzer() {
+        initStack();
+    }
+    
+    private void initStack() {
+        stack.clear();
         StackItem stackItem = new StackItem();        
         stackItem.setItemType(StackSymbols.DOLAR);
         stack.add(stackItem);
     }
     
     
-    private final StackSymbols [][]precedenceTable = {
+      //  private final StackSymbols [][]precedenceTable = {
         //                             &&,                          ||,                          >,                          >=,                          <,                          <=,                          ==,                         (,                         i,                          ),                          ~,                          !=,                         !,                $
-        /*&&*/{StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*||*/{StackSymbols.STACK_LESSER,   StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*>*/ {StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*=>*/{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*<*/ {StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*<=*/{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*==*/{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},     
+        /*&&*///{StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*||*///{StackSymbols.STACK_LESSER,   StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*>*/ //{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*=>*///{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*<*/// {StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*<=*///{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*==*///{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},     
+        /*(*///{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_EQUAL,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_FAULT},
+        /*i*/ //{StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_FAULT,  StackSymbols.STACK_FAULT,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_FAULT,  StackSymbols.STACK_GREATER},
+        /*)*/// {StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_FAULT,  StackSymbols.STACK_FAULT,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,StackSymbols.STACK_GREATER},
+        /*~*/ //{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*!=*///{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*!*/ //{StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*$*/ //{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_FAULT,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.DOLAR}
+  //  };
+    
+    private final StackSymbols [][]precedenceTable = {
+        //                             &&,                          ||,                          >,                        >=,                         <,                         <=,                         ==,                         (,                         i,                          ),                         ~,                          !=,                         !,                $
+        /*&&*/{StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*||*/{StackSymbols.STACK_LESSER,   StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*>*/ {StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*=>*/{StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*<*/ {StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*<=*/{StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*==*/{StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},     
         /*(*/ {StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_EQUAL,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_FAULT},
         /*i*/ {StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_FAULT,  StackSymbols.STACK_FAULT,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_FAULT,  StackSymbols.STACK_GREATER},
         /*)*/ {StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_FAULT,  StackSymbols.STACK_FAULT,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,StackSymbols.STACK_GREATER},
-        /*~*/ {StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
-        /*!=*/{StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*~*/ {StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
+        /*!=*/{StackSymbols.STACK_GREATER,   StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
         /*!*/ {StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER, StackSymbols.STACK_GREATER,  StackSymbols.STACK_GREATER, StackSymbols.STACK_LESSER, StackSymbols.STACK_GREATER},
         /*$*/ {StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.STACK_LESSER, StackSymbols.STACK_FAULT,   StackSymbols.STACK_LESSER,   StackSymbols.STACK_LESSER,  StackSymbols.STACK_LESSER, StackSymbols.DOLAR}
-    };    
+    };
+    
     @Override
     public ICompiledCondition getCompiledCondition(String expression) throws AnalyzerException, LexicalException {
+        initStack();
         cc = new CompiledCondition();
         OpenStageConditionParser oscp = new OpenStageConditionParser();
         oscp.registerCallback(this);
-        oscp.parse(expression);
+        oscp.parse(expression);        
         
         return cc;
     }
 
     @Override
-    public void runCallback(Pair<States, String> event) {
-        try {
-            ConditionItem si = getConvertedToStackItem(event);
-            if (si.getType() == StackSymbols.VARIABLE || si.getType() == StackSymbols.NUMBER || si.getType() == StackSymbols.STRING) {
-                cc.addSymbol(si);
+    public void runCallback(Pair<States, IData> event) throws AnalyzerException {
+        ConditionItem si = getConvertedToStackItem(event);
+        if (si.getType() == StackSymbols.VARIABLE || si.getType() == StackSymbols.NUMBER || si.getType() == StackSymbols.STRING) {
+            if (si.getType() == StackSymbols.VARIABLE) {
+                if (DataTypeHelper.getInstance().getFactory(si.getName()) == null) {
+                    throw new AnalyzerException("Field '" + si.getName().toString() + "' does not exist!");
+                }
             }
-            perform(si);
-        } catch (AnalyzerException ex) {
-            Logger.getLogger(OpenStageConditionAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
+            cc.addSymbol(si);
         }
+        //System.out.println(event);
+        perform(si);
+    }
+    
+    private int getTopTerminal() throws AnalyzerException {
+    
+        return stack.get(getTopTerminalIndex()).getItemType().getValue();
     }
     
     private void perform(ConditionItem event) throws AnalyzerException {
         StackItem si = getStackItem(event);
+        //System.out.println(si.getOriginalMessage());
         
-        StackSymbols oper = precedenceTable[stack.get(getTopTerminalIndex()).getItemType().getValue()][si.getItemType().getValue()];
-        //printStack();
+        StackSymbols oper = precedenceTable[getTopTerminal()][si.getItemType().getValue()];
+        printStack();
         switch(oper) {
             case STACK_EQUAL:
                 stack.add(si);
@@ -92,13 +125,15 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
                 stack.add(si);
                 break;
             case DOLAR:
-                cc.addLastStep(stack.get(stack.size() - 1).getOriginalMessage());
+                if (stack.size() - 1 > 0) {       
+                    cc.addLastStep(stack.get(stack.size() - 1).getOriginalMessage());
+                }
                 System.out.println("OK");
                 break;
             default:
                 throw new AnalyzerException("Bad order of operators/operands " + oper);
         }
-        //printStack();
+        printStack();
         
         
     }
@@ -106,15 +141,22 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
     private void doReduction() throws AnalyzerException {
         int lastControl = getTopControlSymbolIndex();
         List<StackItem> toReduction = stack.subList(lastControl + 1, stack.size());    
-     //   printStack();
+        //printStack();
         if (toReduction.size() == 1) { // E -> i
             stack.remove(lastControl);//<
+            if (!(stack.get(lastControl).getOriginalMessage().getType() == StackSymbols.VARIABLE ||
+                 stack.get(lastControl).getOriginalMessage().getType() == StackSymbols.STRING ||   
+                 stack.get(lastControl).getOriginalMessage().getType() == StackSymbols.NUMBER ||
+                 stack.get(lastControl).getOriginalMessage().getType() == StackSymbols.REGEX ||
+                 stack.get(lastControl).getOriginalMessage().getType() == StackSymbols.DATE )) {
+                throw new AnalyzerException("Syntax error");
+            }
             stack.get(lastControl).setItemType(StackSymbols.STACK_NONTERMINAL); 
             
             ConditionItem itm = cc.addStep(Operations.ASSIGN, stack.get(lastControl).getOriginalMessage());
             stack.get(lastControl).setOriginalMessage(itm);
             //printStack();
-            System.out.println(lastControl);
+            //System.out.println(lastControl);
         } else if (toReduction.size() == 3) {
             if (toReduction.get(1).isNonterminal()) { // E -> (E)
                stack.remove(lastControl); //<               
@@ -138,6 +180,7 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
                 ConditionItem op2 = stack.get(lastControl).getOriginalMessage();
                 assert op2 != null;
                 
+                System.out.println("OP1 TYPE: "+op1.getType().toString());
                 ConditionItem itm = cc.addStep(oper, op1, op2);
                 stack.get(lastControl).setOriginalMessage(itm);  
                 assert itm != null;
@@ -157,7 +200,7 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
         } else {
             throw new AnalyzerException("Bad order of operators/operands");
         }
-   //     printStack();
+       // printStack();
     }
     
     private StackItem getStackItem(ConditionItem event) {
@@ -194,11 +237,11 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
         throw new AnalyzerException("Stack does not a control item!");
     }    
 
-    private ConditionItem getConvertedToStackItem(Pair<States, String> itm) {     
+    private ConditionItem getConvertedToStackItem(Pair<States, IData> itm) {     
         ConditionItem ci = new ConditionItem();
         ci.setType(StackSymbols.valueOf(itm.first.toString()));
         if (ci.getType() == StackSymbols.VARIABLE) {
-            ci.setName(itm.second);
+            ci.setName(itm.second.toString());
         } else {
             ci.setValue(itm.second);
         }        
@@ -295,19 +338,22 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
         NOT_EQUAL(11),
         NOT(12),
         DOLAR(13),
-        STRING(14),
-        NUMBER(15),        
-        ERROR(16), 
-        REGEX(17),
-        BOOL(18),
-        CONST(19), // E -> i
-        STACK_GREATER(20),
-        STACK_LESSER(21),
-        STACK_EQUAL(22),
-        STACK_FAULT(23),
-        STACK_NONTERMINAL(24);
         
-        private int value;
+        STRING(14),
+        NUMBER(15),  
+        DATE(16),
+        ERROR(17), 
+        REGEX(18),
+        BOOL(19),
+        CONST(20), // E -> i
+
+        STACK_GREATER(23),
+        STACK_LESSER(24),
+        STACK_EQUAL(25),
+        STACK_FAULT(26),
+        STACK_NONTERMINAL(27);
+        
+        private final int value;
         
         boolean isNumber() {
             return value == NUMBER.getValue();

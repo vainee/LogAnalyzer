@@ -8,6 +8,9 @@ package loganalyzer.filter.openstagefilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import loganalyzer.datatypes.DataString;
+import loganalyzer.datatypes.DataTypeHelper;
+import loganalyzer.datatypes.IData;
 import loganalyzer.filter.exceptions.AnalyzerException;
 import loganalyzer.filter.exceptions.LexicalException;
 import loganalyzer.filter.interfaces.IParseCallback;
@@ -19,7 +22,7 @@ public class OpenStageConditionParser {
     private int index = 0;
     private String expression;
     private States state = States.INIT;
-    private final List<IParseCallback<Pair<States, String>>> callbacks = new ArrayList<>();
+    private final List<IParseCallback<Pair<States, IData>>> callbacks = new ArrayList<>();
     
     public enum States {
         INIT,
@@ -45,19 +48,19 @@ public class OpenStageConditionParser {
         DOLAR
     };
     
-    public void registerCallback(IParseCallback<Pair<States, String>> callback) {
+    public void registerCallback(IParseCallback<Pair<States, IData>> callback) {
         callbacks.add(callback);
     }
     
     private void sendToken(States symbol) throws AnalyzerException, LexicalException {
-        sendToken(symbol, "");
+        sendToken(symbol, null);
     }
     
-    private void sendToken(States symbol, String value) throws AnalyzerException, LexicalException {
+    private void sendToken(States symbol, IData value) throws AnalyzerException, LexicalException {
         state = States.INIT;
         System.out.println(symbol.toString());
-        Pair<States, String> pair = new Pair<>(symbol, value);
-        for (IParseCallback<Pair<States, String>> itm : callbacks) {
+        Pair<States, IData> pair = new Pair<>(symbol, value);
+        for (IParseCallback<Pair<States, IData>> itm : callbacks) {
             itm.runCallback(pair);
         }
     }
@@ -137,7 +140,7 @@ public class OpenStageConditionParser {
                     if (c != null && Character.isAlphabetic(c)) {
                         str.append(c);
                     } else {
-                        sendToken(States.VARIABLE, str.toString());
+                        sendToken(States.VARIABLE, DataTypeHelper.getInstance().getFactoryByDatatype("String").getNewInstance(str.toString()));
                         if (c != null) {
                             ungetc();
                         }
@@ -149,7 +152,7 @@ public class OpenStageConditionParser {
                         if (c == '\\') {
                             state = States.ESCAPE;
                         } else if (c == '/') {
-                            sendToken(States.REGEX, str.toString());
+                            sendToken(States.REGEX, DataTypeHelper.getInstance().getFactoryByDatatype("String").getNewInstance(str.toString()));
                         } else {
                             str.append(c);
                         }
@@ -159,7 +162,6 @@ public class OpenStageConditionParser {
                     break;    
                     
                 case NOT:
-                    System.out.println("+-+-+-");
                     if (c != null && c == '=') {
                         sendToken(States.NOT_EQUAL);   
                         break;
@@ -177,7 +179,7 @@ public class OpenStageConditionParser {
                     if (c != null && Character.isDigit(c)) {
                         str.append(c);
                     } else {
-                        sendToken(States.NUMBER, str.toString());                         
+                        sendToken(States.NUMBER, DataTypeHelper.getInstance().getFactoryByDatatype("Number").getNewInstance(str.toString()));                         
                         if (c != null) {
                             ungetc();
                         } 
@@ -245,6 +247,7 @@ public class OpenStageConditionParser {
                             sendToken(States.ERROR);
                             return;
                         }
+                        break;
                     }
                     throw new LexicalException("Unexcepted symbol: ");
                     
@@ -253,13 +256,15 @@ public class OpenStageConditionParser {
                         if (c == '\\') {
                             state = States.ESCAPE;
                         } else if (c == '"') {
-                            sendToken(States.STRING, str.toString());
+                            sendToken(States.STRING, DataTypeHelper.getInstance().getFactoryByDatatype("String").getNewInstance(str.toString()));
                         } else {
                             str.append(c);
                         }
+                        
+                        break;
                     }
                     
-                    throw new LexicalException("Unexcepted symbol: ");                  
+                    throw new LexicalException("Unexcepted end of the expression ");                  
             }
         }
         

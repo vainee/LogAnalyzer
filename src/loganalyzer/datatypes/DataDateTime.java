@@ -51,17 +51,6 @@ public class DataDateTime implements IDataDateTime<Date> {
     }
 
     @Override
-    public int compareTo(Object o) throws InvalidParameterException {
-        if (o instanceof DataDateTime) {
-            Date compareValue = ((DataDateTime) o).getValue();
-            return this.value.compareTo(compareValue);
-        }
-        else {
-            throw new InvalidParameterException("Different types for comparison.");
-        }
-    }
-
-    @Override
     public Date getValue() {
         return value;
     }
@@ -69,5 +58,15 @@ public class DataDateTime implements IDataDateTime<Date> {
     @Override
     public void setValue(Date value) {
         this.value = value;
+    }
+
+    @Override
+    public int compareTo(IData<Date> o) {
+        if (o instanceof DataDateTime) {
+            Date compareValue = ((DataDateTime) o).getValue();
+            return this.value.compareTo(compareValue);
+        } else {
+            throw new InvalidParameterException("Different types for comparison.");
+        }
     }
 }

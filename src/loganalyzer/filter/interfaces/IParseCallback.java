@@ -12,6 +12,7 @@ import loganalyzer.filter.exceptions.LexicalException;
 /**
  *
  * @author kj000027
+ * @param <E>
  */
 public interface IParseCallback<E> {
     void runCallback(E event) throws AnalyzerException, LexicalException;

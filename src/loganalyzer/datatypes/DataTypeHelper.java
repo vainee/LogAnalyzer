@@ -15,9 +15,23 @@ import java.util.Map;
  */
 public class DataTypeHelper {
     
-    private final Map<String, IDataTypeFactory> dataCollection = new HashMap<>();
+    private static DataTypeHelper dataTypeHelperInstance = null;
+    
+    private final Map<String, IDataTypeFactory> dataCollection=  new HashMap<>();
     private Map<String, IDataTypeFactory> dataTypePatterns = new HashMap<>();
     
+    
+    public static DataTypeHelper getInstance() {
+        if (dataTypeHelperInstance == null) {
+            dataTypeHelperInstance = new DataTypeHelper();
+        }
+        
+        return dataTypeHelperInstance;
+    }
+    
+    private DataTypeHelper() {
+        
+    }
     /**
      *
      * @param key
@@ -53,6 +67,11 @@ public class DataTypeHelper {
     public IDataTypeFactory getFactory(String type)
     {
         return dataCollection.get(type);
+    }
+    
+    public IDataTypeFactory getFactoryByDatatype(String dataType)
+    {
+        return dataTypePatterns.get(dataType);
     }
 
     /**

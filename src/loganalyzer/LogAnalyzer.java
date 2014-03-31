@@ -1,4 +1,4 @@
- ze spackage loganalyzer;
+package loganalyzer;
 
 import java.io.FileNotFoundException;
 import loganalyzer.datatypes.DataTypeHelper;
@@ -8,7 +8,9 @@ import loganalyzer.datatypes.IntegerFactory;
 import loganalyzer.datatypes.StringFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import loganalyzer.datatypes.IData;
 import loganalyzer.filter.exceptions.AnalyzerException;
+import loganalyzer.filter.exceptions.InterpretException;
 import loganalyzer.filter.exceptions.LexicalException;
 import loganalyzer.filter.interfaces.IConditionAnalyzer;
 import loganalyzer.filter.openstagefilter.OpenStageConditionAnalyzer;
@@ -39,12 +41,12 @@ public class LogAnalyzer {
      * @param args the command line arguments
      * @throws java.io.FileNotFoundException
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, InterpretException {
         // TEST - REMOVE
         
 //        IDataItem a = new IDataItem<string>
-
-	DataTypeHelper testHelper = new DataTypeHelper();
+        
+	DataTypeHelper testHelper = DataTypeHelper.getInstance();
         // factories
         IDataTypeFactory numberFactory = new IntegerFactory();
         IDataTypeFactory stringFactory = new StringFactory();
@@ -120,11 +122,12 @@ public class LogAnalyzer {
         model = new Model();
         */
         
-        //doMain(reader, parser, model);
+        doMain(reader, parser, model, testHelper);
         IConditionAnalyzer analyzer = new OpenStageConditionAnalyzer();
         try {
             //analyzer.getCompiledCondition("(A == B) || A && (C == 5)").eval();
-            analyzer.getCompiledCondition("!!1!").eval();
+            //analyzer.getCompiledCondition("!(Pid == 2080)").eval(model.getItemAtIndex(1));
+            analyzer.getCompiledCondition("Pid != 666 && Pid").eval(model.getItemAtIndex(1));
         } catch (LexicalException | AnalyzerException ex) {
             Logger.getLogger(LogAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
         }

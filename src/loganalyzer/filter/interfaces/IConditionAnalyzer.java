@@ -7,6 +7,7 @@
 package loganalyzer.filter.interfaces;
 
 import loganalyzer.ICallbackInterface;
+import loganalyzer.IParsedMessage;
 import loganalyzer.filter.exceptions.AnalyzerException;
 import loganalyzer.filter.exceptions.LexicalException;
 import loganalyzer.filter.openstagefilter.CompiledCondition;

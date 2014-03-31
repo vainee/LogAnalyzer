@@ -8,6 +8,7 @@ package loganalyzer.filter.openstagefilter;
 
 import java.util.HashMap;
 import java.util.Map;
+import loganalyzer.datatypes.IData;
 import loganalyzer.filter.openstagefilter.OpenStageConditionAnalyzer.StackSymbols;
 
 /**
@@ -18,7 +19,7 @@ public class ConditionItem /*implements IConditionItem*/ {
 
     protected Map<String, String> items = new HashMap<>();
     private StackSymbols type;
-    private String value = ""; 
+    private IData value; 
     private String name = "";
 
     public String getName() {
@@ -37,11 +38,11 @@ public class ConditionItem /*implements IConditionItem*/ {
         this.type = type;
     }
 
-    public String getValue() {
+    public IData getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(IData value) {
         this.value = value;
     }
 }
