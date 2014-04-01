@@ -19,4 +19,5 @@ public interface IParsedMessage {
     List<Pair<Integer, String>> getOriginalMessage();
     
     Map<String, IData> getKeyValues();
+    IData getDataForKey(String key);
 }

@@ -26,7 +26,7 @@ public class DataInteger implements IDataNumber<Integer> {
         this.value = Integer.valueOf(param);
     }
 
-    @Override
+/*    @Override
     public int compareTo(Object o) throws InvalidParameterException {
         if (o instanceof DataInteger) {
             Integer compareValue = ((DataInteger) o).getValue();
@@ -35,7 +35,7 @@ public class DataInteger implements IDataNumber<Integer> {
         else {
             throw new InvalidParameterException("Different types for comparison.");
         }
-    }
+    }*/
 
     @Override
     public Integer getValue() {
@@ -46,9 +46,19 @@ public class DataInteger implements IDataNumber<Integer> {
     public void setValue(Integer value) {
         this.value = value;
     }
-
+    
     @Override
     public String toString() {
-        return value.toString();
+        return String.valueOf(value);
+    }
+
+    @Override
+    public int compareTo(IData<Integer> o) {
+        if (o instanceof DataInteger) {
+            Integer compareValue = ((DataInteger) o).getValue();
+            return this.value.compareTo(compareValue);
+        } else {
+            throw new InvalidParameterException("Different types for comparison.");
+        }
     }
 }

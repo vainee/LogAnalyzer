@@ -15,14 +15,15 @@ import java.util.List;
  * @author kj000027
  */
 public class OpenStageModel implements IModel {
-    private final List<ModelItem> items = new ArrayList<>();
+    private final List<IParsedMessage> items = new ArrayList<>();
     private int index = 0;
 
     @Override
     public void runCallback(IParsedMessage event) {
         if (!event.getKeyValues().isEmpty()) {
             //System.out.println(event.getKeyValues().values().toArray()[0]);
-            System.out.println(event.getKeyValues().toString() + "\n----------------");
+            //System.out.println(event.getKeyValues().toString() + "\n----------------");
+            items.add(event);
         }
     }
 
@@ -36,7 +37,7 @@ public class OpenStageModel implements IModel {
     }
 
     @Override
-    public ModelItem next() {
+    public IParsedMessage next() {
         return items.get(index++);
     }
 
@@ -51,8 +52,8 @@ public class OpenStageModel implements IModel {
     }
 
     @Override
-    public ModelItem getItemAtIndex(int index) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public IParsedMessage getItemAtIndex(int index) {
+        return items.get(index);
     }
     
 }
