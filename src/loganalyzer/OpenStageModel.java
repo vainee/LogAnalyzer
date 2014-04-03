@@ -47,7 +47,7 @@ public class OpenStageModel implements IModel {
 
     @Override
     public int getItemsCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return items.size();
     }
 
     @Override

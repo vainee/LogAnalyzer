@@ -108,7 +108,7 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
         //System.out.println(si.getOriginalMessage());
         
         StackSymbols oper = precedenceTable[getTopTerminal()][si.getItemType().getValue()];
-        printStack();
+       // printStack();
         switch(oper) {
             case STACK_EQUAL:
                 stack.add(si);
@@ -128,12 +128,12 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
                 if (stack.size() - 1 > 0) {       
                     cc.addLastStep(stack.get(stack.size() - 1).getOriginalMessage());
                 }
-                System.out.println("OK");
+                //System.out.println("OK");
                 break;
             default:
                 throw new AnalyzerException("Bad order of operators/operands " + oper);
         }
-        printStack();
+       // printStack();
         
         
     }
@@ -168,7 +168,7 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
                stack.get(lastControl).setItemType(StackSymbols.STACK_NONTERMINAL);
                stack.remove(lastControl + 1); //)
             } else {// E -> E op E    
-                System.out.println("E -> E op E");
+                //System.out.println("E -> E op E");
                 Operations oper;
                 stack.remove(lastControl);//<
                 ConditionItem op1 = stack.get(lastControl).getOriginalMessage();
@@ -180,7 +180,7 @@ public class OpenStageConditionAnalyzer implements IConditionAnalyzer, IParseCal
                 ConditionItem op2 = stack.get(lastControl).getOriginalMessage();
                 assert op2 != null;
                 
-                System.out.println("OP1 TYPE: "+op1.getType().toString());
+               // System.out.println("OP1 TYPE: "+op1.getType().toString());
                 ConditionItem itm = cc.addStep(oper, op1, op2);
                 stack.get(lastControl).setOriginalMessage(itm);  
                 assert itm != null;

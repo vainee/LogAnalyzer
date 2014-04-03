@@ -56,8 +56,8 @@ public class CompiledCondition implements ICompiledCondition {
             //ins.printInstruction();
             switch (ins.getOperation()) {
                 case ASSIGN:
-                    System.out.println("EVAL:ASSING");
-                    ins.printInstruction();
+                  //  System.out.println("EVAL:ASSING");
+                 //   ins.printInstruction();
                     if (ins.getOp1().getType() == StackSymbols.VARIABLE) {
                         loadFromMap(ins.getOp1(), parsedMessage);                        
                     } else {
@@ -68,89 +68,89 @@ public class CompiledCondition implements ICompiledCondition {
                 break;
                     
                 case GREATER:
-                    System.out.println("EVAL:GREATER");
+                 //   System.out.println("EVAL:GREATER");
                     if (Comparator.isGreater(ins.getOp1().getValue(), ins.getOp2().getValue())) {
                         ins.getDst().setValue(exprTrue);
                     } else {
                         ins.getDst().setValue(exprFalse);                    
                     }
-                    ins.printInstruction();                     
+                  //  ins.printInstruction();                     
                     break;
                     
                 case GREATER_EQUAL:
-                    System.out.println("EVAL:GREATER_EQUAL");
+                   // System.out.println("EVAL:GREATER_EQUAL");
                     if (Comparator.isGreaterEqual(ins.getOp1().getValue(), ins.getOp2().getValue())) {
                         ins.getDst().setValue(exprTrue);
                     } else {
                         ins.getDst().setValue(exprFalse);                    
                     }
-                    ins.printInstruction();                      
+                   // ins.printInstruction();                      
                     break;
                     
                 case LESSER:
-                    System.out.println("EVAL:LESSER");
+                  //  System.out.println("EVAL:LESSER");
                     if (Comparator.isLesser(ins.getOp1().getValue(), ins.getOp2().getValue())) {
                         ins.getDst().setValue(exprTrue);
                     } else {
                         ins.getDst().setValue(exprFalse);                    
                     }
-                    ins.printInstruction();                       
+                   // ins.printInstruction();                       
                     break;
                     
                 case LESSER_EQUAL:
-                    System.out.println("EVAL:LESSER_EQUAL");              
+                  //  System.out.println("EVAL:LESSER_EQUAL");              
                     if (Comparator.isLesserEqual(ins.getOp1().getValue(), ins.getOp2().getValue())) {
                         ins.getDst().setValue(exprTrue);
                     } else {
                         ins.getDst().setValue(exprFalse);                    
                     }
-                    ins.printInstruction();                                                             
+                 //   ins.printInstruction();                                                             
                     break;
                 
                 case OR:
-                    System.out.println("EVAL:OR");
+                  //  System.out.println("EVAL:OR");
                     if (isTrue(ins.getOp1()) || isTrue(ins.getOp2())) {
                         ins.getDst().setValue(exprTrue);
                     } else {
                         ins.getDst().setValue(exprFalse);                    
                     }
-                    ins.printInstruction();                     
+                 //   ins.printInstruction();                     
                     break;
                     
                 case AND:
-                    System.out.println("EVAL:AND");
+                 //   System.out.println("EVAL:AND");
                     if (isTrue(ins.getOp1()) && isTrue(ins.getOp2())) {
                         ins.getDst().setValue(exprTrue);
                     } else {
                         ins.getDst().setValue(exprFalse);                    
                     }
-                    ins.printInstruction();                    
+                 //   ins.printInstruction();                    
                     break;
                         
                 case EQUAL:
-                    System.out.println("EVAL:EQUAL");
+                  //  System.out.println("EVAL:EQUAL");
                     ins.getDst().setValue(Comparator.isEqual(ins.op1.getValue(), ins.op2.getValue()) ? exprTrue :exprFalse);                    
-                    ins.printInstruction();
+                  //  ins.printInstruction();
                     break;
                     
                 case NOT_EQUAL:
-                    System.out.println("EVAL:NOT_EQUAL");
+                //    System.out.println("EVAL:NOT_EQUAL");
                     ins.getDst().setValue(compare(ins.op1.getValue(), ins.op2.getValue()) != Operators.EQUAL ? exprTrue :exprFalse);                    
-                    ins.printInstruction();                    
+                 //   ins.printInstruction();                    
                     break;
                     
                 case NOT:
-                    System.out.println("EVAL:NOT: " + ins.getOp1().getValue());    
-                    System.out.println(ins.getOp1().getType().toString());
+                 //   System.out.println("EVAL:NOT: " + ins.getOp1().getValue());    
+                //    System.out.println(ins.getOp1().getType().toString());
                     //IData zero = DataTypeHelper.getInstance().getFactoryByDatatype(ins.getOp1().getType().toString()).getNewInstance("0");
                     ins.getDst().setValue(compare(ins.op1.getValue(), exprFalse) == Operators.EQUAL ? exprTrue : exprFalse); 
-                    ins.printInstruction();                    
+                 //   ins.printInstruction();                    
                     break;                    
                     
                 case EVAL:
-                    System.out.println("EVAL");
-                    ins.printInstruction();
-                    System.out.println(isTrue(ins.getDst()));
+                  //  System.out.println("EVAL");
+                   // ins.printInstruction();
+                  //  System.out.println(isTrue(ins.getDst()));
                     return isTrue(ins.getDst());
                     
                 default:
@@ -266,7 +266,7 @@ public class CompiledCondition implements ICompiledCondition {
         parsedMessage.getDataForKey(op1.getName());
         IData data = parsedMessage.getDataForKey(op1.getName());
         if (data == null) {
-            throw new InterpretException("Unsupported message!");
+            throw new InterpretException("Unsupported message (" + op1.getName() + ")");
         }    
         
         op1.setValue(data);
