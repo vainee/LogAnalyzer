@@ -1,5 +1,7 @@
 package loganalyzer;
 
+import loganalyzer.parsers.ILogParser;
+import loganalyzer.parsers.OpenStageLogParser;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;

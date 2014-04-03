@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package loganalyzer;
+package loganalyzer.parsers;
 
 import java.util.List;
 import java.util.Map;

@@ -4,7 +4,11 @@
  * and open the template in the editor.
  */
 
-package loganalyzer;
+package loganalyzer.parsers;
+
+import loganalyzer.ICallbackInterface;
+import loganalyzer.ILogMessage;
+
 
 import loganalyzer.datatypes.DataTypeHelper;
 

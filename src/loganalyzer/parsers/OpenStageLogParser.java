@@ -4,16 +4,16 @@
  * and open the template in the editor.
  */
 
-package loganalyzer;
+package loganalyzer.parsers;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import loganalyzer.datatypes.DataDateTime;
+import loganalyzer.ICallbackInterface;
+import loganalyzer.ILogMessage;
 import loganalyzer.datatypes.DataTypeHelper;
-import loganalyzer.datatypes.IData;
 
 /**
  *
@@ -30,6 +30,11 @@ public class OpenStageLogParser implements ILogParser {
         return dataHelper;
     }
 
+    /**
+     *
+     * @param helper
+     */
+    @Override
     public void setDataHelper(DataTypeHelper helper) {
         this.dataHelper = helper;
     }
