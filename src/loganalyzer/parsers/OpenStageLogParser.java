@@ -136,11 +136,13 @@ public class OpenStageLogParser implements ILogParser {
     private ParsedMessage parseSingleMessage(List<ILogMessage> buffer) {
         ParsedMessage output = new ParsedMessage();
         StringBuilder textMessage = new StringBuilder();
+        StringBuilder originalMessage = new StringBuilder();
         Integer line = 0;
         
         // iterate the buffer items
         for (ILogMessage msg : buffer) {
             line++;
+            originalMessage.append(msg.getMessage()+"\n");
             
             // handle the file header as a special kind of input
             if (checkHeader(msg, output)) {
@@ -245,6 +247,10 @@ public class OpenStageLogParser implements ILogParser {
         if (textMessage.length() > 0) {
             //output.addKeyValue("TraceMessage", textMessage.toString());
             output.addKeyValue("TraceMessage", dataHelper.getFactory("TraceMessage").getNewInstance(textMessage.toString()));
+        }
+        if (originalMessage.length() > 0)
+        {
+            output.addKeyValue("OriginalMessage", dataHelper.getFactory("OriginalMessage").getNewInstance(originalMessage.toString()));
         }
 
         return output;

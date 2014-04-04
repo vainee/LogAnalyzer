@@ -70,15 +70,15 @@ public class OpenStageModule implements IModule {
             doMain(reader, parser, model, testHelper);
             IConditionAnalyzer analyzer = new OpenStageConditionAnalyzer();
             OpenStageView view = new OpenStageView((OpenStageModel)model);
-          /*  try {
-                view.addCondition(analyzer.getCompiledCondition("Pid == 2732"));
+            try {
+                view.addCondition(analyzer.getCompiledCondition("Pid == 2631 || Pid == 2766"));
                 while(view.hasNext()) {
                     //view.next();
-                    System.out.println(view.next().getDataForKey("TraceMessage").toString());
+                    System.out.println(view.next().getDataForKey("OriginalMessage").toString());
                 }
             } catch (LexicalException | AnalyzerException ex) {
                 Logger.getLogger(LogAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(OpenStageModule.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -105,7 +105,8 @@ public class OpenStageModule implements IModule {
         testHelper.insertWithPattern("SrcLine", "Number");
         // ???
         testHelper.insertWithPattern("Line2Message", "String");
-        testHelper.insertWithPattern("TraceMessage", "String");        
+        testHelper.insertWithPattern("TraceMessage", "String");
+        testHelper.insertWithPattern("OriginalMessage", "String");
     }
     
     private void doMain(

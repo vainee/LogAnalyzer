@@ -1,23 +1,10 @@
 package loganalyzer;
 
-import loganalyzer.parsers.ILogParser;
-import loganalyzer.parsers.OpenStageLogParser;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import loganalyzer.datatypes.DataTypeHelper;
-import loganalyzer.datatypes.DateTimeFactory;
-import loganalyzer.datatypes.IDataTypeFactory;
-import loganalyzer.datatypes.IntegerFactory;
-import loganalyzer.datatypes.StringFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import loganalyzer.filter.exceptions.AnalyzerException;
 import loganalyzer.filter.exceptions.InterpretException;
-import loganalyzer.filter.exceptions.LexicalException;
-import loganalyzer.filter.interfaces.IConditionAnalyzer;
-import loganalyzer.filter.openstagefilter.OpenStageConditionAnalyzer;
 
 
 /**
