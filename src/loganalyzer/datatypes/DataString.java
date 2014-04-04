@@ -7,12 +7,15 @@
 package loganalyzer.datatypes;
 
 import java.security.InvalidParameterException;
+import java.util.Objects;
+import loganalyzer.datatypes.Comparator.Operators;
+import static loganalyzer.datatypes.Comparator.compare;
 
 /**
  *
  * @author Pavel Vejnarek <vejnarek at gmail.com>
  */
-public class DataString implements IData<String> { //IDataString<String>{
+public class DataString implements IData<String>, IDataString<String>{
 
     private String value;
 
@@ -32,7 +35,7 @@ public class DataString implements IData<String> { //IDataString<String>{
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     @Override
     public String toString() {
         return this.value;
@@ -41,10 +44,27 @@ public class DataString implements IData<String> { //IDataString<String>{
     @Override
     public int compareTo(IData<String> o) {
         if (o instanceof DataString) {
-            String compareValue = ((DataString)o).getValue();
+            System.exit(10);
+            String compareValue = ((DataString) o).getValue();
             return this.value.compareTo(compareValue);
         } else {
             throw new InvalidParameterException("Different types for comparison.");
-        }        
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof DataString) {
+            return ((DataString) o).compareTo(this) == 0;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.value);
+        return hash;
     }
 }

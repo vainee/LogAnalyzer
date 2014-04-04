@@ -31,7 +31,7 @@ public class OpenStageModel implements IModel {
     public boolean hasNext() {
         boolean hasNext = index < items.size();
         if (!hasNext) {
-            index=0;
+            index = 0;
         }
         return hasNext;
     }

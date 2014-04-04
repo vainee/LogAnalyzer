@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import loganalyzer.IParsedMessage;
+import loganalyzer.parsers.IParsedMessage;
 import loganalyzer.datatypes.Comparator;
 import static loganalyzer.datatypes.Comparator.compare;
 import loganalyzer.datatypes.Comparator.Operators;

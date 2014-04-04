@@ -8,8 +8,8 @@ package loganalyzer.filter.openstagefilter;
 
 import java.util.ArrayList;
 import java.util.List;
-import loganalyzer.IParsedMessage;
-import loganalyzer.ParsedMessage;
+import loganalyzer.parsers.IParsedMessage;
+import loganalyzer.parsers.ParsedMessage;
 import loganalyzer.datatypes.DataTypeHelper;
 import loganalyzer.datatypes.DateTimeFactory;
 import loganalyzer.datatypes.IDataTypeFactory;
