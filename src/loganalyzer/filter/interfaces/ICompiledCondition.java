@@ -7,7 +7,7 @@
 package loganalyzer.filter.interfaces;
 
 import java.util.Map;
-import loganalyzer.IParsedMessage;
+import loganalyzer.parsers.IParsedMessage;
 import loganalyzer.filter.exceptions.InterpretException;
 
 /**

@@ -31,7 +31,7 @@ public class OpenStageModel implements IModel {
     public boolean hasNext() {
         boolean hasNext = index < items.size();
         if (!hasNext) {
-            index=0;
+            index = 0;
         }
         return hasNext;
     }
@@ -48,7 +48,7 @@ public class OpenStageModel implements IModel {
 
     @Override
     public int getItemsCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return items.size();
     }
 
     @Override
