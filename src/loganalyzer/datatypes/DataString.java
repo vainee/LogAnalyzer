@@ -44,7 +44,6 @@ public class DataString implements IData<String>, IDataString<String>{
     @Override
     public int compareTo(IData<String> o) {
         if (o instanceof DataString) {
-            System.exit(10);
             String compareValue = ((DataString) o).getValue();
             return this.value.compareTo(compareValue);
         } else {
